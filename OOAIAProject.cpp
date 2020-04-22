@@ -3,7 +3,7 @@
 ******** AUTHOR : SARTHAK KAPOOR ********   
 * INDIAN INSTITUTE OF TECHNOLOGY MADRAS *   
 ****** DATE CREATED : 6 MARCH 2020 ******
-***** LAST MODIFIED : 13 MARCH 2020 *****
+***** LAST MODIFIED : 19 APRIL 2020 *****
 *****************************************/
 
 #include <bits/stdc++.h>
@@ -13,7 +13,7 @@
 
 using namespace std;
  
-int getch() {
+int getch() {           // modified getch to print * while taking input
     int ch;
     struct termios t_old, t_new;
 
@@ -28,7 +28,7 @@ int getch() {
     return ch;
 }
 
-string getPassword(bool show_asterisk=true) {
+string getPassword(bool show_asterisk=true) {          //  read password and print * for each character read
     const char BACKSPACE=127;
     const char RETURN=10;
 
@@ -62,7 +62,7 @@ public:
     Date(){
         
     }
-    Date(int day, int month, int year){
+    Date(int day, int month, int year){       // constructor
         this->day = day;
         this->month = month;
         this->year = year;
@@ -89,23 +89,23 @@ istream & operator>>(istream & stream, Date & d){
     return stream>>d.day>>d.month>>d.year;
 }
 
-class Wallet {
+class Wallet {           // class to handle money owned by a person within the application
 private :
     float money;
 public :
-    Wallet(){
+    Wallet(){                     // constructor
         money = 0;
     }
-    Wallet(float money){
+    Wallet(float money){            // constructor
         this->money = money;
     }
-    float getMoney(){
+    float getMoney(){              // return money owned by a person
         return money;
     }
-    void addMoney(float x){
+    void addMoney(float x){        // add money to the account
         money += x;
     }
-    void removeMoney(float x){
+    void removeMoney(float x){     // remove money from the account
         if(x > money){
             cout<<"Your money is set to zero"<<endl;
             money = 0;
@@ -140,9 +140,9 @@ istream & operator>>(istream & stream, Wallet & w){
     return stream;
 }
 
-class Person {
+class Person {              // class to handle the accounts of the people in the application
 private :
-    int userID;
+    int userID;             // credentials of a person handled by the application
     string name;
     Date DOB;
     int age;
@@ -151,14 +151,14 @@ private :
 public :
     Person();
     Person(int userID, string name, Date DOB, int age, string password);
-    int getID()const;
-    string getName();
-    void addMoney(float money);
-    void withdrawMoney(float money);
-    Wallet getWallet();
-    Date getDOB();
-    int getAge();
-    string getPassword();
+    int getID()const;                // return id of the person
+    string getName();                // return name
+    void addMoney(float money);       // add money to account
+    void withdrawMoney(float money);   // withdraw money from account
+    Wallet getWallet();                // return wallet of the person
+    Date getDOB();                     // return date of birth
+    int getAge();                       // return age
+    string getPassword();               // return password
     const bool operator<(const Person & p)const{
         return userID < p.getID();
     }
@@ -232,26 +232,26 @@ ostream & operator<<(ostream & stream, Person & p){
 }
 
 
-class TransactionRecord {   
+class TransactionRecord {                     // class to maintain an instance of an active transaction between 2 persons in the group
     float balance;     // amount transacted
     time_t time;       // time of transaction
     string comment;    // comment for transaction
 public :
-    TransactionRecord(){
+    TransactionRecord(){      // constructor
 
     }
-    TransactionRecord(float balance, time_t time, string comment){
+    TransactionRecord(float balance, time_t time, string comment){       // constructor
         this->balance = balance;
         this->time = time;
         this->comment = comment;
     }
-    float getBalance() const{
+    float getBalance() const{             // get amount transacted
         return balance;
     }
-    time_t getTime() const{
+    time_t getTime() const{              // get time of transaction - Note that the current application uses the system clock
         return time;
     }
-    string getComment() const{
+    string getComment() const{           // get transaction comment
         return comment;
     }
     const bool operator<(const TransactionRecord & x) const {
@@ -283,16 +283,16 @@ ifstream & operator>>(ifstream & stream, TransactionRecord & x){
     return stream;
 }
 
-class Edge {
-    set<TransactionRecord> records;
+class Edge {              // class representing edge of the Graph used to implement transaction relations
+    set<TransactionRecord> records;   // Active transaction history stored as set sorted according to the time of transaction in ascending order
 public :
-    Edge(){
+    Edge(){                 // constructor
         records.clear();
     }
-    void addRecord(TransactionRecord & x){
+    void addRecord(TransactionRecord & x){    // add new transaction
         records.insert(x);
     }
-    set<TransactionRecord> returnRecords(){
+    set<TransactionRecord> returnRecords(){       // get record
         return records;
     }
     friend ofstream & operator<<(ofstream & stream, Edge & e);
@@ -305,7 +305,7 @@ ostream & operator<<(ostream & stream, Edge & e){
     for(auto elem : e.records){
         stream<<elem<<" ";
     }
-    auto x = TransactionRecord(-1, 0, "None");
+    auto x = TransactionRecord(-1, 0, "None");       // delimiter to help while reading record
     stream<<x; 
     return stream;
 }
@@ -345,51 +345,51 @@ ifstream & operator>>(ifstream & stream, Edge & e){
     return stream;
 }
 
-class Comparator{
+class Comparator{           // comparator for sorting aggregate of pair class objects
 public :
     bool operator()(const pair<int, int> & p1, const pair<int, int> & p2){
         return p1.first < p2.first;
     }
 };
 
-class Graph {
+class Graph {           // Implementation of a Dynamic Directed Graph Class with efficient support of vertex delete and addition
 private :
-    map<int, map<int, Edge>> g;
+    map<int, map<int, Edge>> g;     // adjacency list representation
 public :
-    Graph(){
+    Graph(){     // constructor
 
     }
-    void addVertex(int v){
+    void addVertex(int v){      // add a new vertex
         g[v].clear();
     }
-    void addEdge(int u, int v, TransactionRecord & x){
+    void addEdge(int u, int v, TransactionRecord & x){    // add a new edge
         if(g.find(v) == g.end()){
             g[v].clear();
         }
         g[u][v].addRecord(x);
     }
-    void assignEdge(int u, int v, Edge & e){
+    void assignEdge(int u, int v, Edge & e){       // assign a new edge between 2 vertices
         g[u][v] = e;
     }
-    void reset(int u, int v){
-        g[u][v] = Edge();
+    void reset(int u, int v){             // clear the edge between 2 vertices
+        g[u][v] = Edge(); 
     }
-    map<int, Edge> & operator[](int v){  // a reference is returned
+    map<int, Edge> & operator[](int v){      // a reference is returned
         return g[v];
     }
-    Edge getWeight(int u, int v){
+    Edge getWeight(int u, int v){      // return edge corresponding to 2 vertices
         if(g.find(u) != g.end() and g[u].find(v) != g[u].end()){
             return g[u][v];
         }
         return Edge();
     }
-    void deleteVertex(int u){
+    void deleteVertex(int u){      // remove vertex from the graph
         for(auto it = g.begin(); it != g.end(); it++){
             it->second.erase(u);
         }
         g.erase(u);
     }
-    vector<int> getVertices(){
+    vector<int> getVertices(){       // return all vertices
         vector<int> v;
         for(auto it : g){
             v.push_back(it.first);
@@ -402,7 +402,7 @@ public :
     friend ifstream & operator>>(ifstream & stream, Graph & g);
 };
 
-ostream & operator<<(ostream & stream, Graph & g){
+ostream & operator<<(ostream & stream, Graph & g){    
     for(auto it : g.g){
         stream<<it.first<<" ";
         for(auto e : it.second){
@@ -414,7 +414,7 @@ ostream & operator<<(ostream & stream, Graph & g){
     return stream;
 }
 
-ofstream & operator<<(ofstream & stream, Graph & g){
+ofstream & operator<<(ofstream & stream, Graph & g){    // operator to write graph into the file
     for(auto it : g.g){
         stream<<it.first<<" ";
         for(auto e : it.second){
@@ -464,14 +464,14 @@ ifstream & operator>>(ifstream & stream, Graph & g){
     }
 }
 
-class leastDues {
+class leastDues {       // comparator to sort aggregate of pair class object according to a condition
 public :
     const bool operator()(const pair<int, float> & p1, const pair<int, float> & p2) const{
         return p1.second < p2.second;
     }
 };
 
-class MaxDues {
+class MaxDues {         // comparator to sort aggregate of pair class object according to a condition
 public :
     const bool operator()(const pair<int, float> & p1, const pair<int, float> & p2) const {
         return p1.second > p2.second;
@@ -490,33 +490,33 @@ template <class T>
 ifstream & operator>>(ifstream & stream, Group<T> & g);
 
 template<class T>
-class Group {
+class Group {                    // Implementation of a group in the applicatio
 private :
-    string name;
-    int days;
-    float finePercent;
-    Graph group;
-    map<T, int> ids;
-    map<int, T> rel;
+    string name;                // Must be unique
+    int days;                   // Number of days after which fine is imposed
+    float finePercent;          // fine rate to be applied
+    Graph group;                 // Graph representing transactions between 2 nodes correspoding to persons
+    map<T, int> ids;            // map between person and id
+    map<int, T> rel;            // map between id and person
 public :
-    Group(){
+    Group(){         // constructor
 
     }
-    Group(string name, int days, float finePercent){
+    Group(string name, int days, float finePercent){     // constructor
         this->name = name;
         this->days = days;
         this->finePercent = finePercent;
     }
-    string getName(){
+    string getName(){                 // return group name
         return name;
     }
-    int getDays(){
+    int getDays(){              
         return days;
     }
     float getFinePercent(){
         return finePercent;
     }
-    void add(T & p){
+    void add(T & p){                     // add person to group, check if person is already present or not
         if(ids.find(p) != ids.end()){
             cout<<"You are already part of this group"<<endl;
             return;
@@ -525,7 +525,7 @@ public :
         rel[p.getID()] = p;
         group.addVertex(p.getID());
     }
-    void seeDues(T & p){    
+    void seeDues(T & p){                // display dues of a person in the group
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
             return;
@@ -555,7 +555,7 @@ public :
             cout<<"You have no dues"<<endl;
         }
     }
-    void seeTransactions(T & p){
+    void seeTransactions(T & p){       // view active payments done by the person in the group that is those that have not been paid back
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
             return;
@@ -572,7 +572,7 @@ public :
             }
         }
     }
-    void removePerson(T & p){
+    void removePerson(T & p){        // remove person from the group, check if the person has dues or other people have dues
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
             return;
@@ -600,15 +600,15 @@ public :
         ids.erase(p);
         rel.erase(p.getID());
     }
-    bool isInGroup(T & p){
+    bool isInGroup(T & p){             // check membership in group
         return ids.find(p) != ids.end();
     }
-    void getMembers(){
+    void getMembers(){               // show members of the group
         for(auto it : rel){
             cout<<it.first<<" "<<it.second.getName()<<endl;
         }
     }
-    void pay(Person & p, float money){
+    void pay(Person & p, float money){       // pay money for the group and add equal due for every person in the group
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
             return;
@@ -631,7 +631,7 @@ public :
             group.addEdge(p.getID(), elem.first, x);
         }
     }
-    void clearDuesAgainst(Person & p, int id){
+    void clearDuesAgainst(Person & p, int id){             //  clear due against a person against given id with given fine, cancel request if wallet does not have enough money
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
         }
@@ -670,7 +670,7 @@ public :
         remove("Users.txt");
         rename("Temp1", "Users.txt");
     }
-    float getDuesAgainst(Person & p, int id, bool print = true){
+    float getDuesAgainst(Person & p, int id, bool print = true){      // return dues against person with added fine if applicable
         auto e = group.getWeight(id, p.getID());
         float cost = 0;
         time_t curr = time(NULL);
@@ -696,7 +696,7 @@ public :
         }
         return cost;
     }
-    void clearDues(Person & p){
+    void clearDues(Person & p){    // clear dues against everyone in the group, cancel request if wallet does not have enough money
         if(!isInGroup(p)){
             cout<<"You are not part of this group"<<endl;
         }
@@ -743,10 +743,10 @@ public :
         remove("Users.txt");
         rename("Temp1", "Users.txt");
     }
-    int getSize(){
+    int getSize(){     // return group size
         return ids.size();
     }
-    void sortLeastDues(){
+    void sortLeastDues(){         // sort group members according to increasing dues
         vector<pair<int, float>> v;
         for(auto i : rel){
             float total = 0;
@@ -762,7 +762,7 @@ public :
             cout<<rel[it.first].getName()<<" "<<it.second<<endl;
         }
     }
-    void sortMaxDues(){
+    void sortMaxDues(){              // sort group members according to decreasing dues
         vector<pair<int, float>> v;
         for(auto i : rel){
             float total = 0;
@@ -785,7 +785,7 @@ public :
 };
 
 template <class T>
-ostream & operator<<(ostream & stream, Group<T> & g){
+ostream & operator<<(ostream & stream, Group<T> & g){    
     stream<<g.name<<" "<<g.days<<" "<<g.finePercent<<" "<<g.group;
     return stream;
 }
@@ -825,14 +825,14 @@ istream & operator>>(istream & stream, Group<T> & g){
 }
 
 template <class T>
-ofstream & operator<<(ofstream & stream, Group<T> & g){
+ofstream & operator<<(ofstream & stream, Group<T> & g){    // operator to write into the file
     stream<<g.name<<" "<<g.days<<" "<<g.finePercent<<" "<<g.group;
     return stream;
 }
 
 
 template <class T>
-ifstream & operator>>(ifstream & stream, Group<T> & g){
+ifstream & operator>>(ifstream & stream, Group<T> & g){     // operator to read from the file
     string name;
     Graph h;
     int days;
@@ -849,7 +849,7 @@ ifstream & operator>>(ifstream & stream, Group<T> & g){
     return stream;
 }
 
-bool viewOrChangeBioData(Person & p){
+bool viewOrChangeBioData(Person & p){            // function to allow a person to change bio-data
     cout<<"We have the following data "<<endl;
     cout<<"\t\t\t\t\t\t\t\t\tName : "<<p.getName()<<endl;
     cout<<"\t\t\t\t\t\t\t\t\tAge : "<<p.getAge()<<endl;
@@ -889,7 +889,7 @@ bool viewOrChangeBioData(Person & p){
     return true;
 }
 
-bool seeOrChangeWallet(Person & p){
+bool seeOrChangeWallet(Person & p){     // function to allow person to add and remove money from the wallet
     cout<<"Your Wallet contains "<<p.getWallet().getMoney()<<" money "<<endl;
     cout<<"Do you want to add or remove money ?(Y/N)"<<endl;
     char ch;
@@ -929,7 +929,7 @@ bool seeOrChangeWallet(Person & p){
 
 }
 
-bool seeInfo(Person & p){
+bool seeInfo(Person & p){    // function to allow person see personal information
     cout<<"Enter 0 to see or change Bio-Data"<<endl;
     cout<<"Enter 1 to see or change wallet"<<endl;
     cout<<"Enter 2 to exit"<<endl;
@@ -944,7 +944,7 @@ bool seeInfo(Person & p){
     }
 }
 
-void newGroup(Person & p){
+void newGroup(Person & p){   // function to create a new group, group name must be unique, add details for the group
     string name;
     bool check = false;
     do {
@@ -979,7 +979,7 @@ void newGroup(Person & p){
 
 }
 
-void enterGroup(Person & p){
+void enterGroup(Person & p){       // function to let person join group, all groups are public
     cout<<"Enter the name of the group you would want to enter"<<endl;
     string name;
     cin>>name;
@@ -1012,7 +1012,7 @@ void enterGroup(Person & p){
     rename("Temp", "Groups");
 }
 
-void leaveGroup(Person & p){
+void leaveGroup(Person & p){     // function to let person leave group
     ifstream in("Groups");
     Group<Person> g;
     int count = 0;
@@ -1048,7 +1048,7 @@ void leaveGroup(Person & p){
     rename("Temp","Groups");
 }
 
-void viewAlerts(Person & p){
+void viewAlerts(Person & p){    // function to let person view alerts
    ifstream in("Groups");
    Group<Person> g;
    while(in>>g){
@@ -1059,7 +1059,7 @@ void viewAlerts(Person & p){
    }
 }
 
-void seePaymentHistory(Person & p){
+void seePaymentHistory(Person & p){     // function to let person see active payment history
     ifstream in("Groups");
     Group<Person> g;
     while(in>>g){
@@ -1070,7 +1070,7 @@ void seePaymentHistory(Person & p){
     }
 }
 
-void viewGroups(){
+void viewGroups(){     // function to show all groups
     ifstream in("Groups");
     Group<Person> g;
     while(in>>g){
@@ -1079,7 +1079,7 @@ void viewGroups(){
     }
 }
 
-void makePayment(Person & p){
+void makePayment(Person & p){    // function to allow person pay for a group
     ifstream in("Groups");
     cout<<"You are the member of the following groups"<<endl;
     int count = 0;
@@ -1138,7 +1138,7 @@ void makePayment(Person & p){
     cout<<"Payed Successfully"<<endl;
 }
 
-void payDues(Person & p){
+void payDues(Person & p){      // function to let person clear dues in a group
     ifstream in("Groups");
     Group<Person> g;
     int count = 0;
@@ -1183,7 +1183,7 @@ void payDues(Person & p){
     rename("Temp", "Groups");
 }
 
-void getStats(Group<Person> & g){
+void getStats(Group<Person> & g){     // shows statistics of a particular group
     cout<<"Number of members in the group "<<g.getSize()<<endl;
     cout<<"The members are "<<endl;
     g.getMembers();
@@ -1201,7 +1201,7 @@ void getStats(Group<Person> & g){
     }
 }
 
-void seeStatistics(Person & p){
+void seeStatistics(Person & p){    // allows person to see statistcs of a particular group
     ifstream in("Groups");
     Group<Person> g;
     int count = 0;
@@ -1234,7 +1234,7 @@ void seeStatistics(Person & p){
 
 
 
-void run(Person & p){
+void run(Person & p){      // menu to let person run application
     while(true){
         cout<<"\t\t\t\t\t\t\t\t\tEnter 0 to view personal information "<<endl;
         cout<<"\t\t\t\t\t\t\t\t\tEnter 1 to make a new group"<<endl;
@@ -1278,7 +1278,7 @@ void run(Person & p){
     }
 }
 
-void login(){
+void login(){      // safe login into account with password
     int id;
     cout<<"Enter your user id"<<endl;
     cin>>id;
@@ -1315,7 +1315,7 @@ void login(){
     run(p);
 }
 
-bool disclaimer(){
+bool disclaimer(){    // display rules for using application
     cout<<"\t\t\t\t\t\t\t\t\tPlease Read The below Rules"<<endl;
     cout<<"\t\t\t\t\t\t\t\t\tYou will be given a unique ID, remember it and you can set the password only once"<<endl;
     cout<<"\t\t\t\t\t\t\t\t\tYou can change rest of the Bio-Data anytime you like"<<endl;
@@ -1334,7 +1334,7 @@ bool disclaimer(){
     return true;
 }
 
-void createNew(){
+void createNew(){       // create a nre account of a person and add it into the file record
     if(!disclaimer()){
         return;
     }
