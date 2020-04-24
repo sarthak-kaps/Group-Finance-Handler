@@ -272,6 +272,22 @@ void viewAlerts(Person & p){    // function to let person view alerts
    }
 }
 
+void checkDues(Person & p){
+    ifstream in("Groups");
+    Group<Person> g;
+    int count = 0;
+    while(in>>g){
+        if(g.isInGroup(p)){
+            if(g.checkDues(p)){
+                count++;
+            }
+       }
+    }
+    if(count > 0){
+        cout<<"\t\t\t\t\t\t\t\t\tNOTIFICATION - You have dues in "<<count<<" Groups, kindly see your alerts"<<endl<<endl;
+    }
+}
+
 void seePaymentHistory(Person & p){     // function to let person see active payment history
     ifstream in("Groups");
     Group<Person> g;
@@ -525,6 +541,7 @@ void login(){      // safe login into account with password
         }
     }while(check == false);
     cout<<"\t\t\t\t\t\t\t\t\tWELCOME "<<p.getName()<<endl<<endl<<endl;
+    checkDues(p);
     run(p);
 }
 
@@ -589,7 +606,7 @@ void createNew(){       // create a nre account of a person and add it into the 
 
 int main(void){
     while(true){
-        cout<<"\t\t\t\t\t\t\t\t\tWELCOME TO GROUP HANDLING SYSTEM"<<endl<<endl;;
+        cout<<"\t\t\t\t\t\t\t\t\tWELCOME TO GROUP FINANCE HANDLING SYSTEM"<<endl<<endl;;
         cout<<"\t\t\t\t\t\t\t\t\tEnter 0 to login"<<endl;
         cout<<"\t\t\t\t\t\t\t\t\tNew here ?"<<endl;
         cout<<"\t\t\t\t\t\t\t\t\tEnter 1 to make a new Account"<<endl;
